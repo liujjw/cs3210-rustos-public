@@ -58,33 +58,33 @@ impl<'a, T: 'a> StackVec<'a, T> {
     /// Note that the returned slice's length will be the length of this vector,
     /// _not_ the length of the original backing storage.
     pub fn into_slice(self) -> &'a mut [T] {
-        unimplemented!()
+        return self.storage;
     }
 
     /// Extracts a slice containing the entire vector.
     pub fn as_slice(&self) -> &[T] {
-        unimplemented!()
+        return &(self.storage);
     }
 
     /// Extracts a mutable slice of the entire vector.
     pub fn as_mut_slice(&mut self) -> &mut [T] {
-        unimplemented!()
+        return &mut (self.storage);
     }
 
     /// Returns the number of elements in the vector, also referred to as its
     /// 'length'.
     pub fn len(&self) -> usize {
-        unimplemented!()
+        return self.len;
     }
 
     /// Returns true if the vector contains no elements.
     pub fn is_empty(&self) -> bool {
-        unimplemented!()
+        return self.len == 0;
     }
 
     /// Returns true if the vector is at capacity.
     pub fn is_full(&self) -> bool {
-        unimplemented!()
+        return self.len == self.storage.len();
     }
 
     /// Appends `value` to the back of this vector if the vector is not full.
@@ -94,7 +94,13 @@ impl<'a, T: 'a> StackVec<'a, T> {
     /// If this vector is full, an `Err` is returned. Otherwise, `Ok` is
     /// returned.
     pub fn push(&mut self, value: T) -> Result<(), ()> {
-        unimplemented!()
+        if &*self.is_full() {
+            return Err("vector full");
+        } else {
+            sefl.storage[self.len] = value;
+            self.len += 1;
+            return Ok();
+        }
     }
 }
 
@@ -102,9 +108,27 @@ impl<'a, T: Clone + 'a> StackVec<'a, T> {
     /// If this vector is not empty, removes the last element from this vector
     /// by cloning it and returns it. Otherwise returns `None`.
     pub fn pop(&mut self) -> Option<T> {
-        unimplemented!()
+        if &*self.is_empty() {
+            return None;
+        } else {
+            let res = Some(self.storage[self.len - 1].clone());
+            self.len -= 1;
+            return res;
+        }
     }
 }
 
 // FIXME: Implement `Deref`, `DerefMut`, and `IntoIterator` for `StackVec`.
+impl<T> Deref for StackVec<T> {
+    type Target = T;
+    
+    fn deref(&self) -> &Self::Target {
+        &self.value
+    }
+}
+
+impl<T> DerefMut for StackVec<T> {
+    
+}
+
 // FIXME: Implement IntoIterator` for `&StackVec`.
